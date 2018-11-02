@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "89922661106",
+    "firebase_url": "https://ewdriverapp2018.firebaseio.com",
+    "project_id": "ewdriverapp2018",
+    "storage_bucket": "ewdriverapp2018.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:89922661106:android:0dab0793fd71e99c",
+        "android_client_info": {
+          "package_name": "com.courier.services.kohcw"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "89922661106-8rm0h6v71ml68h9hdlac5lvo6dbqo13m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.courier.services.kohcw",
+            "certificate_hash": "b25cdedfd97c88b2c41900d66e18816388118101"
+          }
+        },
+        {
+          "client_id": "89922661106-8m817u78j5b71bfl0nd448661g9d2c96.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYJSBKoKdHTeCB0cPJ8v1DGfCsPr0du_o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "89922661106-8m817u78j5b71bfl0nd448661g9d2c96.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Retrieve">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:background="#800080"
+        android:weightSum="2">
+        <Button
+            android:onClick="goHome"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:text="Home"
+            android:textStyle="bold"
+            android:textColor="#fff"
+            android:background="#800080"
+            android:textAllCaps="false"/>
+        <Button
+            android:onClick="doLogout"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:text="Log Out"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:background="#800080"
+            android:textAllCaps="false"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="Retrieve Job To Update Status"
+        android:textSize="20dp"
+        android:padding="5dp"
+        android:background="#be8e00"
+        android:textColor="#fff"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="5">
+                <Button
+                    android:onClick="doScan"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:text="Barcode Scan"
+                    android:textAllCaps="false"/>
+                <EditText
+                    android:id="@+id/et_orderno"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:singleLine="true"
+                    android:hint="Order No"
+                    android:textAllCaps="false"/>
+            </LinearLayout>
+            <Button
+                android:onClick="getDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:text="Get Booking Detail"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
+                android:descendantFocusability="blocksDescendants"
+                android:id="@+id/lyt"
+                android:background="#EDF3DB"
+                android:paddingRight="10dp"
+                android:onClick="expandDetail">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tx_order"
+                        android:text="Order No: "
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#000"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scrollbars = "vertical" />
+                    <TextView
+                        android:id="@+id/tx_no"
+                        android:layout_toRightOf="@+id/tx_order"
+                        android:hint="OrderNO"
+                        android:textSize="16dp"
+                        android:textColor="#000"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scrollbars = "vertical" />
+                </RelativeLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:text="Job Type: "/>
+                    <TextView
+                        android:id="@+id/tx_type"
+                        android:hint="JobType: JobDorC | JobTypeDesp"
+                        android:textSize="16dp"
+                        android:textColor="#000"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars = "vertical" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tx_from"
+                    android:hint="From"
+                    android:text="From:"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:textColor="#000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical" />
+                <TextView
+                    android:id="@+id/tx_fromctc"
+                    android:text="FromCTCPerson"
+                    android:hint="OrderNO"
+                    android:textSize="16dp"
+                    android:textColor="#000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical" />
+                <TextView
+                    android:id="@+id/tx_fromname"
+                    android:hint="Fromn Name | From Address"
+                    android:textSize="16dp"
+                    android:textColor="#000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:scrollbars = "vertical" />
+                <TextView
+                    android:id="@+id/tx_fromtel"
+                    android:hint="FormTel | FromHPNo"
+                    android:textSize="16dp"
+                    android:textColor="#000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:scrollbars = "vertical" />
+                <TextView
+                    android:id="@+id/tx_to"
+                    android:layout_marginTop="8dp"
+                    android:hint="To"
+                    android:text="To:"
+                    android:textColor="#000"
+                    android:textStyle="bold"
+                    android:textSize="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical" />
+                <TextView
+                    android:id="@+id/tx_toctc"
+                    android:hint="ToCTCPerson"
+                    android:textSize="16dp"
+                    android:textColor="#000"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical" />
+                <TextView
+                    android:id="@+id/tx_toname"
+                    android:hint="ToName | ToAddress"
+                    android:textSize="16dp"
+                    android:textColor="#000"
+                    android:layout_width="match_parent"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical" />
+                <TextView
+                    android:id="@+id/tx_totel"
+                    android:hint="ToTel | ToHPNo"
+                    android:textSize="16dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:textColor="#000"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars = "vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:weightSum="2">
+                <Button
+                    android:onClick="doCall"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Call"
+                    android:textAllCaps="false"/>
+                <Button
+                    android:onClick="doSMS"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="SMS"
+                    android:textAllCaps="false"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:weightSum="2">
+                <Button
+                    android:onClick="doPhoto"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Take Photo"
+                    android:textAllCaps="false"/>
+                <Button
+                    android:onClick="doSign"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Signature"
+                    android:textAllCaps="false"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <ImageView
+                    android:id="@+id/img_photo"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+                <ImageView
+                    android:id="@+id/img_sign"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+            </LinearLayout>
+            <Button
+                android:onClick="doComplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Update Completed Job"
+                android:textAllCaps="false"/>
+            <Button
+                android:onClick="doIncomplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Update Incompleted Job"
+                android:textAllCaps="false"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
