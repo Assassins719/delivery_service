@@ -15,5 +15,9 @@ public class JobItem {
     String ToAddress;
     String ToTel;
     String ToHPNo;
+    String JobDate;
+    String SpecialRemark;
+    String UpdateInfo;
+    String CustRefs;
     boolean isExpand;
 }

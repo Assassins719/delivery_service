@@ -113,6 +113,55 @@
                         android:layout_centerVertical="true"
                         android:scrollbars = "vertical" />
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/tx_date"
+                        android:text="Date: "
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="#000"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scrollbars = "vertical" />
+                    <TextView
+                        android:id="@+id/tx_datefield"
+                        android:layout_toRightOf="@+id/tx_date"
+                        android:hint="Date"
+                        android:textSize="16dp"
+                        android:textColor="#000"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:scrollbars = "vertical" />
+                    <LinearLayout
+                        android:id="@+id/lyt_updateinfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="UpdateInfo : "
+                            android:textSize="16dp"
+                            android:textStyle="bold"
+                            android:textColor="#000"
+                            android:layout_centerVertical="true"
+                            android:scrollbars = "vertical"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="UpdateInfo"
+                            android:id="@+id/tx_updateinfo"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -137,6 +186,31 @@
                         android:scrollbars = "vertical" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/lyt_remark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:text="Remark: "/>
+                    <TextView
+                        android:id="@+id/tx_remark"
+                        android:hint="Remark"
+                        android:textSize="16dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="#000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollHorizontally="true"
+
+                        android:scrollbars = "vertical" />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/tx_from"
                     android:hint="From"
@@ -222,7 +296,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:scrollbars = "vertical" />
-
+                <LinearLayout
+                    android:id="@+id/lyt_custrefs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="#000"
+                        android:textSize="16dp"
+                        android:text="Reference: "/>
+                    <TextView
+                        android:id="@+id/tx_custrefs"
+                        android:hint="CustRefs"
+                        android:textSize="16dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textColor="#000"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollHorizontally="true"
+                        android:scrollbars = "vertical" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -251,13 +348,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="10dp"
-                android:weightSum="2">
+                android:weightSum="3">
                 <Button
-                    android:onClick="doPhoto"
+                    android:id="@+id/btn_photo"
+
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:text="Take Photo"
+                    android:textAllCaps="false"/>
+                <Button
+                    android:onClick="doGallery"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Select Image"
                     android:textAllCaps="false"/>
                 <Button
                     android:onClick="doSign"
@@ -293,7 +398,7 @@
                 android:onClick="doIncomplete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Update Incompleted Job"
+                android:text="Update Uncompleted Job"
                 android:textAllCaps="false"/>
         </LinearLayout>
     </ScrollView>

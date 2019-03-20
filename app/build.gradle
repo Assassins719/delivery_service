@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.courier.services.kohcw"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -38,6 +38,8 @@ dependencies {
     implementation 'com.github.gcacace:signature-pad:1.2.1'
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    compile 'com.android.support:support-annotations:27.1.1'
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
 
     implementation 'com.github.nkzawa:socket.io-client:0.4.1', {
         exclude group: 'org.json', module: 'json'

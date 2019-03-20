@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -85,6 +87,12 @@ public class Signin extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(Signin.this);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("SID","");
+                        editor.putString("USERID", ""); //Your id
+                        editor.apply();
+
                         Intent intent = new Intent(Signin.this, Login.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);

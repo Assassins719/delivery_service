@@ -17,7 +17,10 @@ import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -84,9 +87,12 @@ public class CustomArrayAdapter extends ArrayAdapter<JobItem> {
     }
 
     class ViewHolder {
-        public TextView tx_no, tx_type, tx_from, tx_fromctc, tx_fromname, tx_fromtel, tx_to, tx_toctc, tx_toname, tx_totel;
+        public TextView tx_no, tx_type, tx_from, tx_fromctc, tx_fromname, tx_fromtel, tx_to, tx_toctc, tx_toname, tx_totel, tx_date, tx_updateinfo, tx_remark, tx_custrefs;
         public Button btn_accept;
         public LinearLayout lyt;
+        public LinearLayout lyt_updateinfo;
+        public LinearLayout lyt_remark;
+        public LinearLayout lyt_custrefs;
 
         ViewHolder(View row) {
             tx_no = row.findViewById(R.id.tx_no);
@@ -100,8 +106,15 @@ public class CustomArrayAdapter extends ArrayAdapter<JobItem> {
             tx_toname = row.findViewById(R.id.tx_toname);
             tx_totel = row.findViewById(R.id.tx_totel);
             btn_accept = row.findViewById(R.id.btn_accept);
+            tx_date = row.findViewById(R.id.tx_datefield);
             lyt = row.findViewById(R.id.lyt);
+            lyt_updateinfo = row.findViewById(R.id.lyt_updateinfo);
+            lyt_remark= row.findViewById(R.id.lyt_remark);
+            lyt_custrefs= row.findViewById(R.id.lyt_custrefs);
 
+            tx_updateinfo = row.findViewById(R.id.tx_updateinfo);
+            tx_remark= row.findViewById(R.id.tx_remark);
+            tx_custrefs= row.findViewById(R.id.tx_custrefs);
         }
 
         void populateForm(final JobItem jobItem, final int nIndex) {
@@ -113,12 +126,20 @@ public class CustomArrayAdapter extends ArrayAdapter<JobItem> {
             tx_toctc.setText(jobItem.ToCTCPerson);
             tx_toname.setText(jobItem.ToName + " | " + jobItem.ToAddress);
             tx_totel.setText(jobItem.ToTel + " | " + jobItem.ToHPNo);
+            tx_date.setText(jobItem.JobDate);
+
+            tx_updateinfo.setText(jobItem.UpdateInfo);
+            tx_remark.setText(jobItem.SpecialRemark);
+            tx_custrefs.setText(jobItem.CustRefs);
+
+
             if (!jobItem.isExpand) {
                 tx_from.setVisibility(View.GONE);
                 tx_fromctc.setVisibility(View.GONE);
                 tx_fromtel.setVisibility(View.GONE);
                 tx_toctc.setVisibility(View.GONE);
                 tx_totel.setVisibility(View.GONE);
+                lyt_custrefs.setVisibility(View.GONE);
                 lyt.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 tx_no.setMaxLines(1);
                 tx_type.setMaxLines(1);
@@ -134,6 +155,7 @@ public class CustomArrayAdapter extends ArrayAdapter<JobItem> {
                 tx_fromtel.setVisibility(View.VISIBLE);
                 tx_toctc.setVisibility(View.VISIBLE);
                 tx_totel.setVisibility(View.VISIBLE);
+                lyt_custrefs.setVisibility(View.VISIBLE);
                 lyt.setBackgroundColor(Color.parseColor("#b2bfff"));
                 tx_no.setMaxLines(3);
                 tx_type.setMaxLines(3);
@@ -143,6 +165,15 @@ public class CustomArrayAdapter extends ArrayAdapter<JobItem> {
                 tx_toctc.setMaxLines(3);
                 tx_toname.setMaxLines(3);
                 tx_totel.setMaxLines(3);
+            }
+            if(jobItem.UpdateInfo.equals("")){
+                lyt_updateinfo.setVisibility(View.GONE);
+            }
+            if(jobItem.SpecialRemark.equals("")){
+                lyt_remark.setVisibility(View.GONE);
+            }
+            if(jobItem.CustRefs.equals("")){
+                lyt_custrefs.setVisibility(View.GONE);
             }
             if (jobItem.Status.equals("NEW")) {
                 btn_accept.setText("Accept");
@@ -154,8 +185,6 @@ public class CustomArrayAdapter extends ArrayAdapter<JobItem> {
             btn_accept.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if(btn_accept.getText().equals("Accept")) {
-//                        values.get(nIndex).Status = "IN PROCESS";
-//                        notifyDataSetChanged();
                         acceptjob(jobItem, nIndex);
                     }else{
                         Intent intent = new Intent(context, Retrieve.class);

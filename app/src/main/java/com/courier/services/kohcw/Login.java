@@ -3,8 +3,11 @@ package com.courier.services.kohcw;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,12 +75,25 @@ public class Login extends AppCompatActivity {
         }
         // [END handle_data_extras]
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String strSID = preferences.getString("SID", "");
+        String strUserID = preferences.getString("USERID", "");
+        if((!strSID.equalsIgnoreCase("")) && (!strUserID.equalsIgnoreCase("")))
+        {
+            Intent intent = new Intent(this, Home.class);
+            Bundle b = new Bundle();
+            Global.strSID = strSID;
+            Global.strUserID = strUserID;
+            b.putString("SID", strSID); //Your id
+            b.putString("USERID", strUserID); //Your id
+            intent.putExtras(b);
+            startActivity(intent);
+        }
 
     }
 
     public void doLogin(View view){
-        progressDialog.setMessage("Sign In...");
-        progressDialog.show();
+
         if(et_username.getText().toString().equals("")){
             Toast.makeText(this, "Enter Username.",
                     Toast.LENGTH_SHORT).show();
@@ -87,6 +103,8 @@ public class Login extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             return;
         }
+        progressDialog.setMessage("Sign In...");
+        progressDialog.show();
         String soap_string = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
                 "  <soap12:Body>\n" +
                 "    <IsValidAppUser xmlns=\"http://tempuri.org/\">\n" +
@@ -144,6 +162,9 @@ public class Login extends AppCompatActivity {
                 ("Result").item(0).getTextContent();
         if(dataString.contains("False"))
         {
+            if (progressDialog.isShowing()) {
+                progressDialog.cancel();
+            }
             Login.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -152,13 +173,18 @@ public class Login extends AppCompatActivity {
             Log.d("re","false");
         }else{
             Intent intent = new Intent(this, Home.class);
-
             Bundle b = new Bundle();
             Global.strSID = dataString;
             Global.strUserID = String.valueOf(et_username.getText());
             b.putString("SID", dataString); //Your id
             b.putString("USERID", String.valueOf(et_username.getText())); //Your id
             intent.putExtras(b);
+            //Save user data
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("SID",dataString);
+            editor.putString("USERID", String.valueOf(et_username.getText())); //Your id
+            editor.apply();
 
             startActivity(intent);
             if (progressDialog.isShowing()) {
@@ -167,6 +193,5 @@ public class Login extends AppCompatActivity {
             this.finish();
             Log.d("re",dataString);
         }
-
     }
 }

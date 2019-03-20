@@ -1,19 +1,29 @@
 package com.courier.services.kohcw;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,6 +36,7 @@ import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -41,22 +52,30 @@ import okhttp3.Response;
 public class Retrieve extends AppCompatActivity {
     EditText et_order;
     int TAKE_PHOTO_CODE = 0;
+    int SELECT_PHOTO_CODE = 1;
     ImageView img_photo, img_sign;
     JobItem orderDetail;
     ProgressDialog progressDialog;
     ArrayList<String> arrayReasons = new ArrayList<>();
     ArrayList<String> arraySms = new ArrayList<>();
     int nReasonIndex = -1;
-    public TextView tx_no, tx_type, tx_from, tx_fromctc, tx_fromname, tx_fromtel, tx_to, tx_toctc, tx_toname, tx_totel;
-    public LinearLayout lyt;
+    public TextView tx_no, tx_type, tx_from, tx_fromctc, tx_fromname, tx_fromtel, tx_to, tx_toctc, tx_toname, tx_totel, tx_date, tx_updateinfo, tx_remark, tx_custrefs;
 
+    public LinearLayout lyt, lyt_updateinfo, lyt_remark, lyt_custrefs;
+    Button btn_photo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_retrieve);
-
+        btn_photo = findViewById(R.id.btn_photo);
+        btn_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doPhoto();
+            }
+        });
         img_photo = findViewById(R.id.img_photo);
-        img_sign= findViewById(R.id.img_sign);
+        img_sign = findViewById(R.id.img_sign);
 
         et_order = findViewById(R.id.et_orderno);
         tx_no = findViewById(R.id.tx_no);
@@ -69,8 +88,18 @@ public class Retrieve extends AppCompatActivity {
         tx_toctc = findViewById(R.id.tx_toctc);
         tx_toname = findViewById(R.id.tx_toname);
         tx_totel = findViewById(R.id.tx_totel);
+        tx_date = findViewById(R.id.tx_datefield);
+
         lyt = findViewById(R.id.lyt);
         lyt.setVisibility(View.GONE);
+
+        lyt_updateinfo = findViewById(R.id.lyt_updateinfo);
+        lyt_remark = findViewById(R.id.lyt_remark);
+        lyt_custrefs = findViewById(R.id.lyt_custrefs);
+
+        tx_updateinfo = findViewById(R.id.tx_updateinfo);
+        tx_remark = findViewById(R.id.tx_remark);
+        tx_custrefs = findViewById(R.id.tx_custrefs);
 
         if (Global.retrieveJob != null) {
             lyt.setVisibility(View.VISIBLE);
@@ -81,11 +110,55 @@ public class Retrieve extends AppCompatActivity {
         }
         getResons();
         getSmss();
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+        _checkPermission();
+    }
+    private void _checkPermission() {
+        ArrayList<String> arrStr = new ArrayList<>();
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            Log.d(TAG, "WRITE_EXTERNAL_STORAGE Permission Request");
+            arrStr.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            Log.d(TAG, "READ_EXTERNAL_STORAGE Permission Request");
+            arrStr.add(android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            Log.d(TAG, "WRITE_EXTERNAL_STORAGE Permission Request");
+            arrStr.add(android.Manifest.permission.CAMERA);
+        }
+
+        int len = arrStr.size();
+        if (len > 0) {
+            String[] arrString = new String[len];
+            for (int i = 0; i < len; i++) {
+                arrString[i] = arrStr.get(i);
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(arrString, 45);
+            }
+        }
+    }
+    private String pictureImagePath = "";
+
+    public void doPhoto() {
+        String imageFileName = "Sample.jpg";
+        File storageDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES);
+        pictureImagePath = storageDir.getAbsolutePath() + "/" + imageFileName;
+        File file = new File(pictureImagePath);
+        Uri outputFileUri = Uri.fromFile(file);
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+        startActivityForResult(cameraIntent, TAKE_PHOTO_CODE);
     }
 
-    public void doPhoto(View v) {
-        Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(takePicture, TAKE_PHOTO_CODE);
+    public void doGallery(View v) {
+        Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(pickPhoto, SELECT_PHOTO_CODE);
     }
 
     public void doSign(View v) {
@@ -150,7 +223,7 @@ public class Retrieve extends AppCompatActivity {
                             Log.d("reason", "" + n);
                             d.dismiss();
                             String strSms = "";
-                            if(n != 0){
+                            if (n != 0) {
                                 strSms = arraySms.get(n);
                             }
                             String uri = "smsto:" + orderDetail.FromHPNo;
@@ -180,7 +253,7 @@ public class Retrieve extends AppCompatActivity {
                             Log.d("reason", "" + n);
                             d.dismiss();
                             String strSms = "";
-                            if(n != 0){
+                            if (n != 0) {
                                 strSms = arraySms.get(n);
                             }
                             String uri = "smsto:" + orderDetail.ToHPNo;
@@ -257,6 +330,8 @@ public class Retrieve extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 String mMessage = e.getMessage().toString();
                 Log.w("failure Response", mMessage);
+                img_photo.setImageResource(R.color.zxing_transparent);
+                img_sign.setImageResource(R.color.zxing_transparent);
             }
 
             @Override
@@ -268,6 +343,8 @@ public class Retrieve extends AppCompatActivity {
                     getInCompleteResponse(mMessage, response);
                 } catch (SAXException e) {
                     e.printStackTrace();
+                    img_photo.setImageResource(R.color.zxing_transparent);
+                    img_sign.setImageResource(R.color.zxing_transparent);
                 }
             }
         });
@@ -292,9 +369,13 @@ public class Retrieve extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 }
             });
+            img_photo.setImageResource(R.color.zxing_transparent);
+            img_sign.setImageResource(R.color.zxing_transparent);
 
         } catch (JSONException e) {
             e.printStackTrace();
+            img_photo.setImageResource(R.color.zxing_transparent);
+            img_sign.setImageResource(R.color.zxing_transparent);
         }
         Retrieve.this.runOnUiThread(new Runnable() {
             @Override
@@ -319,15 +400,22 @@ public class Retrieve extends AppCompatActivity {
         progressDialog.show();
         String strSignencoded = "";
         String strPhotoencoded = "";
-        if(bmp_sign != null) {
+        if (bmp_sign != null) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             bmp_sign.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             strSignencoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
         }
-        if(bmp_photo != null) {
+        if (bmp_photo != null) {
+            final float densityMultiplier = this.getResources().getDisplayMetrics().density;
+
+            int h = (int) (300 * densityMultiplier);
+            int w = (int) (h * bmp_photo.getWidth() / ((double) bmp_photo.getHeight()));
+
+            bmp_photo = Bitmap.createScaledBitmap(bmp_photo, w, h, true);
+
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            bmp_photo.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            bmp_photo.compress(Bitmap.CompressFormat.PNG, 50, byteArrayOutputStream);
             byte[] byteArray = byteArrayOutputStream.toByteArray();
             strPhotoencoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
         }
@@ -359,6 +447,8 @@ public class Retrieve extends AppCompatActivity {
             public void onFailure(Call call, IOException e) {
                 String mMessage = e.getMessage().toString();
                 Log.w("failure Response", mMessage);
+                img_photo.setImageResource(R.color.zxing_transparent);
+                img_sign.setImageResource(R.color.zxing_transparent);
             }
 
             @Override
@@ -370,6 +460,8 @@ public class Retrieve extends AppCompatActivity {
                     getCompleteResponse(mMessage, response);
                 } catch (SAXException e) {
                     e.printStackTrace();
+                    img_photo.setImageResource(R.color.zxing_transparent);
+                    img_sign.setImageResource(R.color.zxing_transparent);
                 }
             }
         });
@@ -387,6 +479,10 @@ public class Retrieve extends AppCompatActivity {
             JSONObject jsonCONTWS = (JSONObject) jsonResult.get("CONTWSJOBUPD");
             JSONObject jsonJob = (JSONObject) jsonCONTWS.get("SubmitCompletedJob");
             final String strResult = (String) jsonJob.get("Result");
+
+            img_photo.setImageResource(R.color.zxing_transparent);
+            img_sign.setImageResource(R.color.zxing_transparent);
+
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -397,6 +493,8 @@ public class Retrieve extends AppCompatActivity {
 
         } catch (JSONException e) {
             e.printStackTrace();
+            img_photo.setImageResource(R.color.zxing_transparent);
+            img_sign.setImageResource(R.color.zxing_transparent);
         }
         Retrieve.this.runOnUiThread(new Runnable() {
             @Override
@@ -414,7 +512,8 @@ public class Retrieve extends AppCompatActivity {
             fillDetail();
         }
     }
-    public void getSmss(){
+
+    public void getSmss() {
         String strAPI = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
                 "  <soap12:Body>\n" +
                 "    <GetSMSStdMsg xmlns=\"http://tempuri.org/\">\n" +
@@ -454,6 +553,7 @@ public class Retrieve extends AppCompatActivity {
             }
         });
     }
+
     public void getResponseSms(String response, Response mainRes) throws IOException, SAXException {
         String xml = response;
         XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
@@ -485,6 +585,7 @@ public class Retrieve extends AppCompatActivity {
             }
         });
     }
+
     public void getResons() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Please wait...");
@@ -539,6 +640,10 @@ public class Retrieve extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Getting Order Detail...");
         progressDialog.show();
+
+        img_photo.setImageResource(R.color.zxing_transparent);
+        img_sign.setImageResource(R.color.zxing_transparent);
+
         String strAPI = "<soap12:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap12=\"http://www.w3.org/2003/05/soap-envelope\">\n" +
                 "  <soap12:Body>\n" +
                 "    <GetOrderDetail xmlns=\"http://tempuri.org/\">\n" +
@@ -607,74 +712,95 @@ public class Retrieve extends AppCompatActivity {
                 orderDetail = new JobItem();
                 if (jsonJobs.has("OrderNo")) {
                     orderDetail.OrderNo = jsonJobs.getString("OrderNo");
-                }else{
+                } else {
                     orderDetail.OrderNo = "";
                 }
                 if (jsonJobs.has("Status")) {
                     orderDetail.Status = jsonJobs.getString("Status");
-                }else{
+                } else {
                     orderDetail.Status = "";
                 }
                 if (jsonJobs.has("OrderNo")) {
                     orderDetail.JobDorC = jsonJobs.getString("JobDorC");
-                }else{
+                } else {
                     orderDetail.JobDorC = "";
                 }
                 if (jsonJobs.has("JobTypeDesp")) {
                     orderDetail.JobTypeDesp = jsonJobs.getString("JobTypeDesp");
-                }else{
+                } else {
                     orderDetail.JobTypeDesp = "";
                 }
                 if (jsonJobs.has("FromName")) {
                     orderDetail.FromName = jsonJobs.getString("FromName");
-                }else{
+                } else {
                     orderDetail.FromName = "";
                 }
                 if (jsonJobs.has("FromCTCPerson")) {
                     orderDetail.FromCTCPerson = jsonJobs.getString("FromCTCPerson");
-                }else{
+                } else {
                     orderDetail.FromCTCPerson = "";
                 }
                 if (jsonJobs.has("FromAddress")) {
                     orderDetail.FromAddress = jsonJobs.getString("FromAddress");
-                }else{
+                } else {
                     orderDetail.FromAddress = "";
                 }
                 if (jsonJobs.has("FromTel")) {
                     orderDetail.FromTel = jsonJobs.getString("FromTel");
-                }else{
+                } else {
                     orderDetail.FromTel = "";
                 }
                 if (jsonJobs.has("FromHPNo")) {
                     orderDetail.FromHPNo = jsonJobs.getString("FromHPNo");
-                }else{
+                } else {
                     orderDetail.FromHPNo = "";
                 }
                 if (jsonJobs.has("ToName")) {
                     orderDetail.ToName = jsonJobs.getString("ToName");
-                }else{
+                } else {
                     orderDetail.ToName = "";
                 }
                 if (jsonJobs.has("ToCTCPerson")) {
                     orderDetail.ToCTCPerson = jsonJobs.getString("ToCTCPerson");
-                }else{
+                } else {
                     orderDetail.ToCTCPerson = "";
                 }
                 if (jsonJobs.has("ToAddress")) {
                     orderDetail.ToAddress = jsonJobs.getString("ToAddress");
-                }else{
+                } else {
                     orderDetail.ToAddress = "";
                 }
                 if (jsonJobs.has("ToTel")) {
                     orderDetail.ToTel = jsonJobs.getString("ToTel");
-                }else{
+                } else {
                     orderDetail.ToTel = "";
                 }
                 if (jsonJobs.has("ToHPNo")) {
                     orderDetail.ToHPNo = jsonJobs.getString("ToHPNo");
-                }else{
+                } else {
                     orderDetail.ToHPNo = "";
                 }
+                if (jsonJobs.has("JobDate")) {
+                    orderDetail.JobDate = jsonJobs.getString("JobDate");
+                } else {
+                    orderDetail.JobDate = "";
+                }
+                if (jsonJobs.has("UpdateInfo")) {
+                    orderDetail.UpdateInfo = jsonJobs.getString("UpdateInfo");
+                } else {
+                    orderDetail.UpdateInfo = "";
+                }
+                if (jsonJobs.has("SpecialRemark")) {
+                    orderDetail.SpecialRemark = jsonJobs.getString("SpecialRemark");
+                } else {
+                    orderDetail.SpecialRemark = "";
+                }
+                if (jsonJobs.has("CustRefs")) {
+                    orderDetail.CustRefs = jsonJobs.getString("CustRefs");
+                } else {
+                    orderDetail.CustRefs = "";
+                }
+
                 this.orderDetail.isExpand = false;
                 Retrieve.this.runOnUiThread(new Runnable() {
                     @Override
@@ -739,12 +865,18 @@ public class Retrieve extends AppCompatActivity {
             tx_toctc.setText(orderDetail.ToCTCPerson);
             tx_toname.setText(orderDetail.ToName + " | " + orderDetail.ToAddress);
             tx_totel.setText(orderDetail.ToTel + " | " + orderDetail.ToHPNo);
+            tx_date.setText(orderDetail.JobDate);
+            tx_updateinfo.setText(orderDetail.UpdateInfo);
+            tx_remark.setText(orderDetail.SpecialRemark);
+            tx_custrefs.setText(orderDetail.CustRefs);
+
             if (!orderDetail.isExpand) {
                 tx_from.setVisibility(View.GONE);
                 tx_fromctc.setVisibility(View.GONE);
                 tx_fromtel.setVisibility(View.GONE);
                 tx_toctc.setVisibility(View.GONE);
                 tx_totel.setVisibility(View.GONE);
+                lyt_custrefs.setVisibility(View.GONE);
                 lyt.setBackgroundColor(Color.parseColor("#EDF3DB"));
 
                 tx_no.setMaxLines(1);
@@ -761,6 +893,7 @@ public class Retrieve extends AppCompatActivity {
                 tx_fromtel.setVisibility(View.VISIBLE);
                 tx_toctc.setVisibility(View.VISIBLE);
                 tx_totel.setVisibility(View.VISIBLE);
+                lyt_custrefs.setVisibility(View.VISIBLE);
                 lyt.setBackgroundColor(Color.parseColor("#b2bfff"));
 
                 tx_no.setMaxLines(3);
@@ -782,6 +915,15 @@ public class Retrieve extends AppCompatActivity {
             tx_toname.setText("");
             tx_totel.setText("");
         }
+        if (orderDetail.UpdateInfo.equals("")) {
+            lyt_updateinfo.setVisibility(View.GONE);
+        }
+        if (orderDetail.SpecialRemark.equals("")) {
+            lyt_remark.setVisibility(View.GONE);
+        }
+        if (orderDetail.CustRefs.equals("")) {
+            lyt_custrefs.setVisibility(View.GONE);
+        }
     }
 
     public void goHome(View v) {
@@ -795,6 +937,12 @@ public class Retrieve extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(Retrieve.this);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("SID", "");
+                        editor.putString("USERID", ""); //Your id
+                        editor.apply();
+
                         Intent intent = new Intent(Retrieve.this, Login.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
@@ -808,7 +956,8 @@ public class Retrieve extends AppCompatActivity {
         Intent intent = new Intent(this, ScanActivity.class);
         startActivityForResult(intent, 999);
     }
-    public void doAdd(View v){
+
+    public void doAdd(View v) {
 
     }
 
@@ -826,9 +975,26 @@ public class Retrieve extends AppCompatActivity {
                 //Write your code if there's no result
             }
         }
-        if (requestCode == TAKE_PHOTO_CODE && resultCode == RESULT_OK) {
-            bmp_photo = (Bitmap) data.getExtras().get("data");
-            img_photo.setImageBitmap(bmp_photo);
+        if (requestCode == SELECT_PHOTO_CODE ) {
+            if (resultCode == RESULT_OK) {
+                Uri selectedImage = data.getData();
+                try {
+                    bmp_photo = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                img_photo.setImageURI(selectedImage);
+            }
+        }
+
+        if (requestCode == TAKE_PHOTO_CODE) {
+            if (resultCode == RESULT_OK) {
+                File imgFile = new File(pictureImagePath);
+                if (imgFile.exists()) {
+                    bmp_photo = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    img_photo.setImageURI(Uri.parse(pictureImagePath));
+                }
+            }
         }
         if (requestCode == 888) {
             bmp_sign = (Bitmap) data.getExtras().get("result");

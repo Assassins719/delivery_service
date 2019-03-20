@@ -42,7 +42,7 @@ public class DrawSign extends AppCompatActivity {
         Bitmap photo = mSignaturePad.getSignatureBitmap();
         final float densityMultiplier = this.getResources().getDisplayMetrics().density;
 
-        int h= (int) (100*densityMultiplier);
+        int h= (int) (120*densityMultiplier);
         int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
 
         photo=Bitmap.createScaledBitmap(photo, w, h, true);
@@ -60,7 +60,7 @@ public class DrawSign extends AppCompatActivity {
         Bitmap photo = mSignaturePad.getSignatureBitmap();
         final float densityMultiplier = this.getResources().getDisplayMetrics().density;
 
-        int h= (int) (100*densityMultiplier);
+        int h= (int) (120*densityMultiplier);
         int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
 
         photo=Bitmap.createScaledBitmap(photo, w, h, true);

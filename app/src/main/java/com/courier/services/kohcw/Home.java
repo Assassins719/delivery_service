@@ -5,9 +5,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,7 +25,11 @@ import org.json.JSONObject;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import fr.arnaudguyon.xmltojsonlib.XmlToJson;
 import okhttp3.Call;
@@ -34,8 +40,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class Home extends AppCompatActivity
-{
+public class Home extends AppCompatActivity {
     String strSID = "";
     String strUSERID = "";
     String strAPI = "";
@@ -44,6 +49,7 @@ public class Home extends AppCompatActivity
     ArrayList<JobItem> arrayJobs = new ArrayList<JobItem>();
     CustomArrayAdapter mAdapter;
     SwipeRefreshLayout pulltorefresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,8 +74,8 @@ public class Home extends AppCompatActivity
         });
         sendTokenToServer();
     }
-    public void readPermission()
-    {
+
+    public void readPermission() {
         try {
             PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_PERMISSIONS);
             if (info.requestedPermissions != null) {
@@ -81,8 +87,8 @@ public class Home extends AppCompatActivity
         }
     }
 
-    public void sendTokenToServer(){
-        Log.d("Refreshed token1:", " " +         FirebaseInstanceId.getInstance().getToken());
+    public void sendTokenToServer() {
+        Log.d("Refreshed token1:", " " + FirebaseInstanceId.getInstance().getToken());
 
 
         String strToken = FirebaseInstanceId.getInstance().getToken();
@@ -126,6 +132,7 @@ public class Home extends AppCompatActivity
             }
         });
     }
+
     public void getResponseToken(String response, Response mainRes) throws IOException, SAXException {
         String xml = response;
         XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
@@ -141,10 +148,12 @@ public class Home extends AppCompatActivity
             progressDialog.cancel();
         }
     }
-    public void doRefresh(View v){
+
+    public void doRefresh(View v) {
         getJobs();
     }
-    public void getJobs(){
+
+    public void getJobs() {
         progressDialog.setMessage("Retrieve Jobs...");
         progressDialog.setCancelable(false);
         progressDialog.show();
@@ -188,14 +197,17 @@ public class Home extends AppCompatActivity
             }
         });
     }
-    public void goSiginin(View v){
+
+    public void goSiginin(View v) {
         Intent intent = new Intent(this, Signin.class);
         startActivity(intent);
     }
-    public void goRetrieve(View v){
+
+    public void goRetrieve(View v) {
         Intent intent = new Intent(this, Retrieve.class);
         startActivity(intent);
     }
+
     public void goHome(View v) {
 //        Intent intent = new Intent(this, Signin.class);
 //        startActivity(intent);
@@ -210,6 +222,13 @@ public class Home extends AppCompatActivity
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
+
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(Home.this);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("SID","");
+                        editor.putString("USERID", ""); //Your id
+                        editor.apply();
+
                         Intent intent = new Intent(Home.this, Login.class);
                         startActivity(intent);
                         Home.this.finish();
@@ -219,13 +238,15 @@ public class Home extends AppCompatActivity
 
 
     }
+
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
-        Log.d("resume","resume");
+        Log.d("resume", "resume");
         // put your code here...
         getJobs();
     }
+
     public void getResponse(String response, Response mainRes) throws IOException, SAXException {
         String xml = response;
         XmlToJson xmlToJson = new XmlToJson.Builder(xml).build();
@@ -245,152 +266,199 @@ public class Home extends AppCompatActivity
                     JobItem jobTemp = new JobItem();
                     if (jsonJobs.getJSONObject(i).has("OrderNo")) {
                         jobTemp.OrderNo = jsonJobs.getJSONObject(i).getString("OrderNo");
-                    }else{
+                    } else {
                         jobTemp.OrderNo = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("Status")) {
                         jobTemp.Status = jsonJobs.getJSONObject(i).getString("Status");
-                    }else{
+                    } else {
                         jobTemp.Status = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("OrderNo")) {
                         jobTemp.JobDorC = jsonJobs.getJSONObject(i).getString("JobDorC");
-                    }else{
+                    } else {
                         jobTemp.JobDorC = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("JobTypeDesp")) {
                         jobTemp.JobTypeDesp = jsonJobs.getJSONObject(i).getString("JobTypeDesp");
-                    }else{
+                    } else {
                         jobTemp.JobTypeDesp = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("FromName")) {
                         jobTemp.FromName = jsonJobs.getJSONObject(i).getString("FromName");
-                    }else{
+                    } else {
                         jobTemp.FromName = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("FromCTCPerson")) {
                         jobTemp.FromCTCPerson = jsonJobs.getJSONObject(i).getString("FromCTCPerson");
-                    }else{
+                    } else {
                         jobTemp.FromCTCPerson = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("FromAddress")) {
                         jobTemp.FromAddress = jsonJobs.getJSONObject(i).getString("FromAddress");
-                    }else{
+                    } else {
                         jobTemp.FromAddress = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("FromTel")) {
                         jobTemp.FromTel = jsonJobs.getJSONObject(i).getString("FromTel");
-                    }else{
+                    } else {
                         jobTemp.FromTel = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("FromHPNo")) {
                         jobTemp.FromHPNo = jsonJobs.getJSONObject(i).getString("FromHPNo");
-                    }else{
+                    } else {
                         jobTemp.FromHPNo = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("ToName")) {
                         jobTemp.ToName = jsonJobs.getJSONObject(i).getString("ToName");
-                    }else{
+                    } else {
                         jobTemp.ToName = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("ToCTCPerson")) {
                         jobTemp.ToCTCPerson = jsonJobs.getJSONObject(i).getString("ToCTCPerson");
-                    }else{
+                    } else {
                         jobTemp.ToCTCPerson = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("ToAddress")) {
                         jobTemp.ToAddress = jsonJobs.getJSONObject(i).getString("ToAddress");
-                    }else{
+                    } else {
                         jobTemp.ToAddress = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("ToTel")) {
                         jobTemp.ToTel = jsonJobs.getJSONObject(i).getString("ToTel");
-                    }else{
+                    } else {
                         jobTemp.ToTel = "";
                     }
                     if (jsonJobs.getJSONObject(i).has("ToHPNo")) {
                         jobTemp.ToHPNo = jsonJobs.getJSONObject(i).getString("ToHPNo");
-                    }else{
+                    } else {
                         jobTemp.ToHPNo = "";
                     }
+                    if (jsonJobs.getJSONObject(i).has("JobDate")) {
+                        jobTemp.JobDate = jsonJobs.getJSONObject(i).getString("JobDate");
+                    } else {
+                        jobTemp.JobDate = "";
+                    }
+                    if (jsonJobs.getJSONObject(i).has("UpdateInfo")) {
+                        jobTemp.UpdateInfo = jsonJobs.getJSONObject(i).getString("UpdateInfo");
+                    } else {
+                        jobTemp.UpdateInfo = "";
+                    }
+                    if (jsonJobs.getJSONObject(i).has("SpecialRemark")) {
+                        jobTemp.SpecialRemark = jsonJobs.getJSONObject(i).getString("SpecialRemark");
+                    } else {
+                        jobTemp.SpecialRemark = "";
+                    }
+                    if (jsonJobs.getJSONObject(i).has("CustRefs")) {
+                        jobTemp.CustRefs = jsonJobs.getJSONObject(i).getString("CustRefs");
+                    } else {
+                        jobTemp.CustRefs = "";
+                    }
+
                     jobTemp.isExpand = false;
-                    arrayJobs.add(jobTemp);
+                    if (jobTemp.Status != "Completed") {
+                        arrayJobs.add(jobTemp);
+                    }
                 }
-            }else{
+            } else {
                 JSONObject jsonJobs = (JSONObject) jsonCONTWS.get("RetrieveJob");
                 JobItem jobTemp = new JobItem();
                 if (jsonJobs.has("OrderNo")) {
                     jobTemp.OrderNo = jsonJobs.getString("OrderNo");
-                }else{
+                } else {
                     jobTemp.OrderNo = "";
                 }
                 if (jsonJobs.has("Status")) {
                     jobTemp.Status = jsonJobs.getString("Status");
-                }else{
+                } else {
                     jobTemp.Status = "";
                 }
                 if (jsonJobs.has("OrderNo")) {
                     jobTemp.JobDorC = jsonJobs.getString("JobDorC");
-                }else{
+                } else {
                     jobTemp.JobDorC = "";
                 }
                 if (jsonJobs.has("JobTypeDesp")) {
                     jobTemp.JobTypeDesp = jsonJobs.getString("JobTypeDesp");
-                }else{
+                } else {
                     jobTemp.JobTypeDesp = "";
                 }
                 if (jsonJobs.has("FromName")) {
                     jobTemp.FromName = jsonJobs.getString("FromName");
-                }else{
+                } else {
                     jobTemp.FromName = "";
                 }
                 if (jsonJobs.has("FromCTCPerson")) {
                     jobTemp.FromCTCPerson = jsonJobs.getString("FromCTCPerson");
-                }else{
+                } else {
                     jobTemp.FromCTCPerson = "";
                 }
                 if (jsonJobs.has("FromAddress")) {
                     jobTemp.FromAddress = jsonJobs.getString("FromAddress");
-                }else{
+                } else {
                     jobTemp.FromAddress = "";
                 }
                 if (jsonJobs.has("FromTel")) {
                     jobTemp.FromTel = jsonJobs.getString("FromTel");
-                }else{
+                } else {
                     jobTemp.FromTel = "";
                 }
                 if (jsonJobs.has("FromHPNo")) {
                     jobTemp.FromHPNo = jsonJobs.getString("FromHPNo");
-                }else{
+                } else {
                     jobTemp.FromHPNo = "";
                 }
                 if (jsonJobs.has("ToName")) {
                     jobTemp.ToName = jsonJobs.getString("ToName");
-                }else{
+                } else {
                     jobTemp.ToName = "";
                 }
                 if (jsonJobs.has("ToCTCPerson")) {
                     jobTemp.ToCTCPerson = jsonJobs.getString("ToCTCPerson");
-                }else{
+                } else {
                     jobTemp.ToCTCPerson = "";
                 }
                 if (jsonJobs.has("ToAddress")) {
                     jobTemp.ToAddress = jsonJobs.getString("ToAddress");
-                }else{
+                } else {
                     jobTemp.ToAddress = "";
                 }
                 if (jsonJobs.has("ToTel")) {
                     jobTemp.ToTel = jsonJobs.getString("ToTel");
-                }else{
+                } else {
                     jobTemp.ToTel = "";
                 }
                 if (jsonJobs.has("ToHPNo")) {
                     jobTemp.ToHPNo = jsonJobs.getString("ToHPNo");
-                }else{
+                } else {
                     jobTemp.ToHPNo = "";
                 }
+
+                if (jsonJobs.has("JobDate")) {
+                    jobTemp.JobDate = jsonJobs.getString("JobDate");
+                } else {
+                    jobTemp.JobDate = "";
+                }
+                if (jsonJobs.has("UpdateInfo")) {
+                    jobTemp.UpdateInfo = jsonJobs.getString("UpdateInfo");
+                } else {
+                    jobTemp.UpdateInfo = "";
+                }
+                if (jsonJobs.has("SpecialRemark")) {
+                    jobTemp.SpecialRemark = jsonJobs.getString("SpecialRemark");
+                } else {
+                    jobTemp.SpecialRemark = "";
+                }
+                if (jsonJobs.has("CustRefs")) {
+                    jobTemp.CustRefs = jsonJobs.getString("CustRefs");
+                } else {
+                    jobTemp.CustRefs = "";
+                }
+
                 jobTemp.isExpand = false;
-                arrayJobs.add(jobTemp);
+                if (jobTemp.Status != "Completed") {
+                    arrayJobs.add(jobTemp);
+                }
             }
 
             Home.this.runOnUiThread(new Runnable() {
@@ -427,23 +495,32 @@ public class Home extends AppCompatActivity
             });
 
         } catch (JSONException e) {
+            arrayJobs.clear();
+            Home.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter = new CustomArrayAdapter(Home.this, arrayJobs);
+                    mList.setAdapter(mAdapter);
+                }
+            });
             e.printStackTrace();
         }
         if (progressDialog.isShowing()) {
             progressDialog.cancel();
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == 999) {
-            if(resultCode == Activity.RESULT_OK){
-                String result=data.getStringExtra("result");
+            if (resultCode == Activity.RESULT_OK) {
+                String result = data.getStringExtra("result");
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        builder.setTitle("Scan Result");
-                        builder.setMessage(result);
-                        AlertDialog alert1 = builder.create();
-                        alert1.show();
+                builder.setTitle("Scan Result");
+                builder.setMessage(result);
+                AlertDialog alert1 = builder.create();
+                alert1.show();
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Write your code if there's no result
