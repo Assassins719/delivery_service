@@ -81,7 +81,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="UpdateInfo : "
+                android:text=""
                 android:textSize="16dp"
                 android:textStyle="bold"
                 android:textColor="#000"
@@ -242,6 +242,7 @@
         android:id="@+id/lyt_custrefs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp">
         <TextView
             android:layout_width="wrap_content"

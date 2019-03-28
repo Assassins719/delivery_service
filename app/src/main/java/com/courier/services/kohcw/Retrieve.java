@@ -365,17 +365,18 @@ public class Retrieve extends AppCompatActivity {
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    img_photo.setImageResource(R.color.zxing_transparent);
+                    img_sign.setImageResource(R.color.zxing_transparent);
                     Toast.makeText(Retrieve.this, strResult,
                             Toast.LENGTH_LONG).show();
                 }
             });
-            img_photo.setImageResource(R.color.zxing_transparent);
-            img_sign.setImageResource(R.color.zxing_transparent);
+
 
         } catch (JSONException e) {
             e.printStackTrace();
-            img_photo.setImageResource(R.color.zxing_transparent);
-            img_sign.setImageResource(R.color.zxing_transparent);
+//            img_photo.setImageResource(R.color.zxing_transparent);
+//            img_sign.setImageResource(R.color.zxing_transparent);
         }
         Retrieve.this.runOnUiThread(new Runnable() {
             @Override
@@ -480,12 +481,13 @@ public class Retrieve extends AppCompatActivity {
             JSONObject jsonJob = (JSONObject) jsonCONTWS.get("SubmitCompletedJob");
             final String strResult = (String) jsonJob.get("Result");
 
-            img_photo.setImageResource(R.color.zxing_transparent);
-            img_sign.setImageResource(R.color.zxing_transparent);
 
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+
+                    img_photo.setImageResource(R.color.zxing_transparent);
+                    img_sign.setImageResource(R.color.zxing_transparent);
                     Toast.makeText(Retrieve.this, strResult,
                             Toast.LENGTH_LONG).show();
                 }

@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".Retrieve">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:background="#16238f"
+        android:paddingLeft="18dp"
+        android:orientation="horizontal"
+        android:text="@string/app_version">
+    </TextView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
@@ -148,7 +157,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="UpdateInfo : "
+                            android:text=""
                             android:textSize="16dp"
                             android:textStyle="bold"
                             android:textColor="#000"
@@ -300,6 +309,7 @@
                     android:id="@+id/lyt_custrefs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp">
                     <TextView
                         android:layout_width="wrap_content"
